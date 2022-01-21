@@ -1,0 +1,53 @@
+﻿<h1>Список моделей</h1>
+<input type="button" value="Добавить" class="btn btn-default" (click)="add()" />
+<table *ngIf="tableMode; else create" class="table table-striped">
+    <thead>
+        <tr>
+            <td>Заказчик</td>
+            <td>Стоимость</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let o of orders">
+            <ng-template [ngIf]="order?.orderId != o.orderId" [ngIfElse]="edit">
+                <td>{{o?.userName}}</td>
+                <td>{{o?.cost}}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" (click)="editOrder(o)">Изменить</button>
+                    <button class="btn btn-sm btn-danger" (click)="delete(o)">Удалить</button>
+                </td>
+            </ng-template>
+        </tr>
+    </tbody>
+</table>
+
+<!--шаблон для редактирования-->
+<ng-template #edit>
+    <td>
+        <input type="text" [(ngModel)]="order.userName" class="form-control" />
+    </td>
+    <td>
+        <input type="text" [(ngModel)]="order.cost" class="form-control" />
+    </td>
+    <td>
+        <input type="button" value="Сохранить" (click)="save()" class="btn btn-sm btn-success" />
+        <input type="button" value="Отмена" (click)="cancel()" class="btn btn-sm btn-warning" />
+    </td>
+</ng-template>
+
+<!--шаблон для добавления-->
+<ng-template #create>
+    <div class="form-group">
+        <label>Заказчик</label>
+        <input type="text" [(ngModel)]="order.userName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Стоимость</label>
+        <input type="number" [(ngModel)]="order.cost" class="form-control" />
+    </div>
+    <div>
+        <input type="button" value="Сохранить" (click)="save()" class="btn btn-success" />
+        <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
+    </div>
+</ng-template>
