@@ -1,4 +1,4 @@
-﻿export interface RegistrationResponseDto {
+﻿export interface RegisterResponse {
     isSuccessfulRegistration: boolean;
     errors: string[];
 }

@@ -1,4 +1,4 @@
-﻿import { UserForRegistrationDto } from './userForRegistrationDto';
+﻿import { RegisterRequest } from './registerRequest';
 import { AuthenticationService } from './authentication.service';
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -33,7 +33,7 @@ export class RegisterUserComponent implements OnInit {
     public registerUser = (registerFormValue) => {
         this.showError = false;
         const formValues = { ...registerFormValue };
-        const user: UserForRegistrationDto = {
+        const user: RegisterRequest = {
             email: formValues.email,
             contactNumber: formValues.contactNumber,
             password: formValues.password
