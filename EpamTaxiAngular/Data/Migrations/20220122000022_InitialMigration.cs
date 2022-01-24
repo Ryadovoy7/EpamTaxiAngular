@@ -67,20 +67,6 @@ namespace EpamTaxiAngular.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    OrderID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Cost = table.Column<decimal>(type: "money", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.OrderID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PersistedGrants",
                 columns: table => new
                 {
@@ -206,6 +192,32 @@ namespace EpamTaxiAngular.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    OrderID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrderDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    CarDeliveryTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    FromLocation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    ToLocation = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Cost = table.Column<decimal>(type: "money", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.OrderID);
+                    table.ForeignKey(
+                        name: "FK_Orders_Users",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -257,9 +269,14 @@ namespace EpamTaxiAngular.Data.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
-                name: "UserName",
+                name: "OrderDate",
                 table: "Orders",
-                column: "UserName");
+                column: "OrderDate");
+
+            migrationBuilder.CreateIndex(
+                name: "UserID",
+                table: "Orders",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_Expiration",

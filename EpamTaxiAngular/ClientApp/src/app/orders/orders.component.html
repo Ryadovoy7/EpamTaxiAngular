@@ -1,53 +1,75 @@
-﻿<h1>Список моделей</h1>
-<input type="button" value="Добавить" class="btn btn-default" (click)="add()" />
-<table *ngIf="tableMode; else create" class="table table-striped">
+﻿<h1>Список заказов</h1>
+<input *ngIf="tableMode" type="button" value="Добавить" class="btn btn-default" (click)="addOrEdit(true)" />
+<table *ngIf="tableMode; else createOrEdit" class="table table-striped">
     <thead>
         <tr>
             <td>Заказчик</td>
+            <td>Контактный номер</td>
+            <td>Дата создания заказа</td>
+            <td>Время подачи авто</td>
+            <td>Откуда</td>
+            <td>Куда</td>
             <td>Стоимость</td>
+            <td>Статус</td>
             <td></td>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let o of orders">
             <ng-template [ngIf]="order?.orderId != o.orderId" [ngIfElse]="edit">
-                <td>{{o?.userName}}</td>
-                <td>{{o?.cost}}</td>
+                <td>{{o.fullName}}</td>
+                <td>{{o.contactNumber}}</td>
+                <td>{{o.orderDate | date:'d/M/yyyy hh:mm'}}</td>
+                <td>{{o.carDeliveryTime | date:'d/M/yyyy hh:mm'}}</td>
+                <td>{{o.fromLocation}}</td>
+                <td>{{o.toLocation}}</td>
+                <td>{{o.cost}}</td>
+                <td>{{status[o.status]}}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" (click)="editOrder(o)">Изменить</button>
-                    <button class="btn btn-sm btn-danger" (click)="delete(o)">Удалить</button>
+                    <button class="btn btn-sm btn-danger" (click)="cancelOrder(o)">Отменить</button>
+                    <ng-template [ngIf]="this.authService.isUserAdmin()">
+                        <button class="btn btn-sm btn-primary" (click)="confirmOrder(o)">Подтвердить</button>
+                        <button class="btn btn-sm btn-danger" (click)="delete(o)">Удалить</button>
+                    </ng-template>
                 </td>
             </ng-template>
         </tr>
     </tbody>
 </table>
 
-<!--шаблон для редактирования-->
-<ng-template #edit>
-    <td>
-        <input type="text" [(ngModel)]="order.userName" class="form-control" />
-    </td>
-    <td>
-        <input type="text" [(ngModel)]="order.cost" class="form-control" />
-    </td>
-    <td>
-        <input type="button" value="Сохранить" (click)="save()" class="btn btn-sm btn-success" />
-        <input type="button" value="Отмена" (click)="cancel()" class="btn btn-sm btn-warning" />
-    </td>
-</ng-template>
-
-<!--шаблон для добавления-->
-<ng-template #create>
-    <div class="form-group">
-        <label>Заказчик</label>
-        <input type="text" [(ngModel)]="order.userName" class="form-control" />
+<ng-template #createOrEdit>
+    <div *ngIf="showError" class="alert alert-danger" role="alert">
+        <span [innerHTML]="errorMessage"></span>
     </div>
     <div class="form-group">
-        <label>Стоимость</label>
-        <input type="number" [(ngModel)]="order.cost" class="form-control" />
+        <label>ФИО</label>
+        <input type="text" [(ngModel)]="order.fullName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Номер телефона</label>
+        <input type="text" [(ngModel)]="order.contactNumber" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Откуда</label>
+        <input type="text" [(ngModel)]="order.fromLocation" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Куда</label>
+        <input type="text" [(ngModel)]="order.toLocation" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Когда</label>
+        <input type="datetime-local" [(ngModel)]="order.carDeliveryTime" class="form-control" />
     </div>
     <div>
-        <input type="button" value="Сохранить" (click)="save()" class="btn btn-success" />
+        <label>Стоимость</label>
+        <input type="text" [readonly]="true" [value]="order?.cost?.toFixed(2)" class="form-control" />
+    </div>
+    <br />
+    <div>
+        <input [disabled]="!costCalculated" type="button" value="Сохранить" (click)="save()" class="btn btn-success" />
         <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
+        <input type="button" value="Предварительный расчет" (click)="calculate()" class="btn btn-warning" />
     </div>
 </ng-template>

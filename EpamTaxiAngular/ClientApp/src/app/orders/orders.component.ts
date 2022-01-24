@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { Order } from '../order';
+import { AuthenticationService } from '../authentication/authentication.service'
 
 @Component({
     selector: 'app-orders',
@@ -9,44 +10,90 @@ import { Order } from '../order';
 })
 export class OrdersComponent implements OnInit {
 
-    order: Order = new Order();   // изменяемый товар
-    orders: Order[];                // массив товаров
-    tableMode: boolean = true;          // табличный режим
+    order: Order = new Order();   
+    orders: Order[];               
+    tableMode: boolean = true;
+    editMode: boolean = false;
+    costCalculated: boolean = false;
+    errorMessage: string = '';
+    showError: boolean = false;
 
-    constructor(private dataService: DataService) { }
+    status: string[] = ["Новый", "Подтвержден", "Завершен", "Отменен"];
+
+    constructor(private dataService: DataService, private authService: AuthenticationService) { }
 
     ngOnInit() {
-        this.loadOrders();    // загрузка данных при старте компонента  
+        this.loadOrders();   
     }
-    // получаем данные через сервис
+
     loadOrders() {
         this.dataService.getOrders()
             .subscribe((data: Order[]) => this.orders = data);
     }
-    // сохранение данных
-    save() {
+
+    async save() {
+        this.showError = false;
         if (this.order.orderId == null) {
-            this.dataService.createOrder(this.order)
-                .subscribe((data: Order) => this.orders.push(data));
+            await this.dataService.createOrder(this.order)
+                .toPromise().then((data: Order) => this.orders.push(data))
+                .catch((error) => {
+                    this.errorMessage = error;
+                    this.showError = true;
+                });
         } else {
-            this.dataService.updateOrder(this.order)
-                .subscribe(data => this.loadOrders());
+            await this.dataService.updateOrder(this.order)
+                .toPromise().then(data => this.loadOrders())
+                .catch(
+                    (error) => {
+                        this.errorMessage = error;
+                        this.showError = true;
+                    });
         }
-        this.cancel();
+        if (!this.showError) {
+            this.cancel();
+        }           
     }
-    editOrder(p: Order) {
-        this.order = p;
+    editOrder(o: Order) {
+        this.order = o;
+        this.addOrEdit(false);
+    }
+    cancelOrder(o: Order) {
+        this.dataService.cancelOrder(o.orderId)
+            .subscribe(data => this.loadOrders());
+    }
+    confirmOrder(o: Order) {
+        this.dataService.confirmOrder(o.orderId)
+            .subscribe(data => this.loadOrders());
     }
     cancel() {
         this.order = new Order();
         this.tableMode = true;
+        this.costCalculated = false;
+        this.showError = false;
+        this.loadOrders();
     }
-    delete(p: Order) {
-        this.dataService.deleteOrder(p.orderId)
+    delete(o: Order) {
+        this.dataService.deleteOrder(o.orderId)
             .subscribe(data => this.loadOrders());
     }
-    add() {
-        this.cancel();
+    addOrEdit(add: boolean) {
+        if (add)
+            this.cancel();
         this.tableMode = false;
     }
+    async calculate() {
+        await this.dataService.calculateCost(this.order).toPromise()
+            .then(data => this.order.cost = data as number)
+            .catch(
+                (error) => {
+                    this.errorMessage = error;
+                    this.showError = true;
+                });
+        if (!this.showError)
+            this.costCalculated = true;
+    }
+    formatCost(val : number) {
+        val.toFixed(2);
+    }
+
 }

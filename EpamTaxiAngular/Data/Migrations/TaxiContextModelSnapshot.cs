@@ -27,15 +27,38 @@ namespace EpamTaxiAngular.Data.Migrations
                         .HasColumnName("OrderID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CarDeliveryTime")
+                        .HasColumnType("datetime");
+
                     b.Property<decimal>("Cost")
                         .HasColumnType("money");
 
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("FromLocation")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ToLocation")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("UserID");
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex(new[] { "UserName" }, "UserName");
+                    b.HasIndex(new[] { "OrderDate" }, "OrderDate");
+
+                    b.HasIndex(new[] { "UserId" }, "UserID");
 
                     b.ToTable("Orders");
                 });
@@ -236,6 +259,22 @@ namespace EpamTaxiAngular.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "5d32a8d6-c3de-4d9f-b160-8f42dd2e8f7f",
+                            ConcurrencyStamp = "d08b4ebf-d909-46e6-b6d9-179cc32edc66",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "b885e7ba-f0a4-4553-879b-42190a994271",
+                            ConcurrencyStamp = "cd0af923-5167-4840-a9b1-76e2045b76f7",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -342,6 +381,16 @@ namespace EpamTaxiAngular.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("EpamTaxiAngular.Models.Order", b =>
+                {
+                    b.HasOne("EpamTaxiAngular.Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_Orders_Users");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -391,6 +440,11 @@ namespace EpamTaxiAngular.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EpamTaxiAngular.Models.User", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

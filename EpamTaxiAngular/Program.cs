@@ -23,7 +23,7 @@ namespace EpamTaxiAngular
                 try
                 {
                     var context = services.GetRequiredService<TaxiContext>();
-                    //SampleData.Initialize(context);
+                    SampleData.Initialize(context);
                 }
                 catch (Exception ex)
                 {
