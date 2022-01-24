@@ -4,9 +4,9 @@ namespace EpamTaxiAngular.Models
 {
     public class AuthRequestModel
     {
-        [Required(ErrorMessage = "Email is required.")]
+        [Required(ErrorMessage = "Требуется электронная почта.")]
         public string Email { get; set; }
-        [Required(ErrorMessage = "Password is required.")]
+        [Required(ErrorMessage = "Требуется пароль.")]
         public string Password { get; set; }
     }
 }

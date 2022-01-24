@@ -2,7 +2,6 @@ using EpamTaxiAngular.Data;
 using EpamTaxiAngular.JwtFeatures;
 using EpamTaxiAngular.Models;
 using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,12 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EpamTaxiAngular
 {
@@ -38,28 +32,19 @@ namespace EpamTaxiAngular
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-
-            //services.AddIdentityServer()
-            //    .AddDeveloperSigningCredential()
-            //    .AddApiAuthorization<User, TaxiContext>();
-
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<TaxiContext>();         
 
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict;
             });
 
             services.AddIdentityServer()
                 .AddInMemoryCaching()
                 .AddClientStore<InMemoryClientStore>()
                 .AddResourceStore<InMemoryResourcesStore>();
-            //.AddApiAuthorization<User, TaxiContext>();
-            //.AddDeveloperSigningCredential()
-            //.AddInMemoryPersistedGrants();
 
             var jwtSettings = Configuration.GetSection("JwtSettings");
             services.AddAuthentication(opt =>
@@ -77,31 +62,7 @@ namespace EpamTaxiAngular
                     ValidIssuer = jwtSettings.GetSection("validIssuer").Value,
                     ValidAudience = jwtSettings.GetSection("validAudience").Value,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetSection("securityKey").Value))
-                };
-                options.Events = new JwtBearerEvents()
-                {
-                    OnMessageReceived = c =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnTokenValidated = c =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnChallenge = c =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnForbidden = c =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnAuthenticationFailed = c =>
-                    {
-                        return Task.CompletedTask;
-                    }
-
-                };
+                };               
             });
 
             services.AddScoped<JwtHandler>();
