@@ -1,5 +1,5 @@
 ﻿<h1>Список заказов</h1>
-<input *ngIf="tableMode" type="button" value="Добавить" class="btn btn-default" (click)="addOrEdit(true)" />
+<input *ngIf="tableMode" type="button" value="Добавить" class="btn btn-primary" (click)="addOrEdit(true)" />
 <table *ngIf="tableMode; else createOrEdit" class="table table-striped">
     <thead>
         <tr>
@@ -19,19 +19,19 @@
             <ng-template [ngIf]="order?.orderId != o.orderId" [ngIfElse]="edit">
                 <td>{{o.fullName}}</td>
                 <td>{{o.contactNumber}}</td>
-                <td>{{o.orderDate | date:'d/M/yyyy hh:mm'}}</td>
-                <td>{{o.carDeliveryTime | date:'d/M/yyyy hh:mm'}}</td>
+                <td>{{o.orderDate | date:'dd.MM.yyyy hh:mm'}}</td>
+                <td>{{o.carDeliveryTime | date:'dd.MM.yyyy hh:mm'}}</td>
                 <td>{{o.fromLocation}}</td>
                 <td>{{o.toLocation}}</td>
-                <td>{{o.cost}}</td>
+                <td>{{o.cost.toFixed(2)}}</td>
                 <td>{{status[o.status]}}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" (click)="editOrder(o)">Изменить</button>
-                    <button class="btn btn-sm btn-danger" (click)="cancelOrder(o)">Отменить</button>
-                    <ng-template [ngIf]="this.authService.isUserAdmin()">
-                        <button class="btn btn-sm btn-primary" (click)="confirmOrder(o)">Подтвердить</button>
-                        <button class="btn btn-sm btn-danger" (click)="delete(o)">Удалить</button>
+                    <ng-template [ngIf]="o.status !== 3">
+                        <button class="btn btn-sm btn-primary" (click)="editOrder(o)">Изменить</button>
+                        <button class="btn btn-sm btn-danger" (click)="cancelOrder(o)">Отменить</button>
+                        <button *ngIf="this.authService.isUserAdmin()" class="btn btn-sm btn-primary" (click)="confirmOrder(o)">Подтвердить</button>
                     </ng-template>
+                    <button *ngIf="this.authService.isUserAdmin()" class="btn btn-sm btn-danger" (click)="delete(o)">Удалить</button>
                 </td>
             </ng-template>
         </tr>

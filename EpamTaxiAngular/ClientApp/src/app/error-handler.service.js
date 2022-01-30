@@ -29,7 +29,7 @@ let ErrorHandlerService = class ErrorHandlerService {
             return error.message;
         };
         this.handleBadRequest = (error) => {
-            if (this._router.url === '/authentication/register' || this._router.url === '/orders') {
+            if (this._router.url === '/authentication/register' || this._router.url === '/') {
                 let message = '';
                 const values = Object.values(error.error.errors);
                 values.map((m) => {

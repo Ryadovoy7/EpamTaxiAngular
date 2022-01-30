@@ -20,6 +20,6 @@ export class LoginMenuComponent implements OnInit {
 
     public logout = () => {
         this._authService.logout();
-        this._router.navigate(["/"]);
+        this._router.navigate(["/authentication/login"]);
     }
 }

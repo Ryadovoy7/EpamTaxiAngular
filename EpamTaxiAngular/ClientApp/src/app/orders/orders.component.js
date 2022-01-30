@@ -89,6 +89,7 @@ let OrdersComponent = class OrdersComponent {
     }
     calculate() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.showError = false;
             yield this.dataService.calculateCost(this.order).toPromise()
                 .then(data => this.order.cost = data)
                 .catch((error) => {
@@ -107,6 +108,7 @@ OrdersComponent = __decorate([
     Component({
         selector: 'app-orders',
         templateUrl: './orders.component.html',
+        styleUrls: ['./orders.component.css'],
         providers: [DataService]
     })
 ], OrdersComponent);

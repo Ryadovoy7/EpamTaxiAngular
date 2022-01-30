@@ -20,5 +20,8 @@ namespace EpamTaxiAngular.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
+
+        [Required]
+        public bool Admin { get; set; }
     }
 }

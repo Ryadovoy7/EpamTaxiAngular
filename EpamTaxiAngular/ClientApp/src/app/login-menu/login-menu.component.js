@@ -11,7 +11,7 @@ let LoginMenuComponent = class LoginMenuComponent {
         this._router = _router;
         this.logout = () => {
             this._authService.logout();
-            this._router.navigate(["/"]);
+            this._router.navigate(["/authentication/login"]);
         };
     }
     ngOnInit() {

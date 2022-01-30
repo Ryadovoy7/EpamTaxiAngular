@@ -65,10 +65,10 @@ namespace EpamTaxiAngular.Controllers
             {
                 string userName = User.FindFirst(ClaimTypes.Name)?.Value;
                 if (string.IsNullOrEmpty(userName))
-                    return BadRequest();
+                    return Unauthorized();
                 var user = db.Users.FirstOrDefault(u => u.UserName == userName);
                 if (user == null)
-                    return BadRequest();
+                    return Unauthorized();
                 db.Orders.Add(orderModel.Map(user));
                 user.ContactNumber = orderModel.ContactNumber;
                 db.Update(user);
@@ -97,15 +97,19 @@ namespace EpamTaxiAngular.Controllers
             {
                 string userName = User.FindFirst(ClaimTypes.Name)?.Value;
                 if (string.IsNullOrEmpty(userName))
-                    return BadRequest();
+                    return Unauthorized();
                 var user = db.Users.FirstOrDefault(u => u.UserName == userName);
                 if (user == null)
+                    return Unauthorized();
+
+                var order = orderModel.Map(user);
+                if (order.Status == (int)OrderStatus.Canceled)
                     return BadRequest();
 
-                orderModel.Cost = CalculateOrderCost(orderModel);
-                var order = orderModel.Map(user);
                 if (!CheckRightsForOrder(order))
                     return Forbid();
+
+                orderModel.Cost = CalculateOrderCost(orderModel);
 
                 user.ContactNumber = orderModel.ContactNumber;
                 db.Update(order);
@@ -140,6 +144,10 @@ namespace EpamTaxiAngular.Controllers
         public IActionResult Cancel(int id)
         {
             Order order = db.Orders.FirstOrDefault(x => x.OrderId == id);
+
+            if (order.Status == (int)OrderStatus.Canceled)
+                return BadRequest();
+
             if (order != null)
             {
                 if (!CheckRightsForOrder(order))
@@ -159,6 +167,10 @@ namespace EpamTaxiAngular.Controllers
         public IActionResult Confirm(int id)
         {
             Order order = db.Orders.FirstOrDefault(x => x.OrderId == id);
+
+            if (order.Status == (int)OrderStatus.Canceled)
+                return BadRequest();
+
             if (order != null)
             {
                 if (!CheckRightsForOrder(order))

@@ -2,14 +2,6 @@
 
 namespace EpamTaxiAngular.Models
 {
-    public enum OrderStatus
-    {
-        New = 0,
-        Confirmed = 1,
-        Completed = 2,
-        Canceled = 3
-    }
-
     public class Order
     {
         public int OrderId { get; set; }

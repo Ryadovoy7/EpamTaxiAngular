@@ -6,6 +6,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 @Component({
     selector: 'app-orders',
     templateUrl: './orders.component.html',
+    styleUrls: ['./orders.component.css'],
     providers: [DataService]
 })
 export class OrdersComponent implements OnInit {
@@ -82,6 +83,7 @@ export class OrdersComponent implements OnInit {
         this.tableMode = false;
     }
     async calculate() {
+        this.showError = false;
         await this.dataService.calculateCost(this.order).toPromise()
             .then(data => this.order.cost = data as number)
             .catch(

@@ -2,4 +2,5 @@
     email: string;
     contactNumber: string;
     password: string;
+    admin: boolean;
 }

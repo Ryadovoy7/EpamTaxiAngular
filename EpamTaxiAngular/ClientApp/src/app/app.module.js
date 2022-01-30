@@ -13,7 +13,6 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LoginMenuComponent } from './login-menu/login-menu.component';
-import { HomeComponent } from './home/home.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ForbiddenComponent } from './authentication/forbidden.component';
 import { ErrorHandlerService } from './error-handler.service';
@@ -29,7 +28,6 @@ AppModule = __decorate([
             AppComponent,
             NavMenuComponent,
             LoginMenuComponent,
-            HomeComponent,
             OrdersComponent,
         ],
         imports: [
@@ -37,8 +35,7 @@ AppModule = __decorate([
             HttpClientModule,
             FormsModule,
             RouterModule.forRoot([
-                { path: '', component: HomeComponent, pathMatch: 'full' },
-                { path: 'orders', component: OrdersComponent, canActivate: [AuthenticationGuard] },
+                { path: '', component: OrdersComponent, canActivate: [AuthenticationGuard] },
                 { path: 'authentication', loadChildren: () => import('./authentication/authentication.module').then(m => m.AuthenticationModule) },
                 { path: 'forbidden', component: ForbiddenComponent },
             ]),

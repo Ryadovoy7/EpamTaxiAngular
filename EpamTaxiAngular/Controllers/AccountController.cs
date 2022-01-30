@@ -1,16 +1,8 @@
 ﻿using EpamTaxiAngular.JwtFeatures;
 using EpamTaxiAngular.Models;
 using EpamTaxiAngular.ViewModels;
-using IdentityServer4;
-using IdentityServer4.Events;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,7 +42,10 @@ namespace EpamTaxiAngular.Controllers
                 return BadRequest(new RegisterResponseViewModel { Errors = errors });
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            if (model.Admin)
+                await _userManager.AddToRoleAsync(user, "Administrator");
+            else
+                await _userManager.AddToRoleAsync(user, "User");
 
             return StatusCode(201);
         }

@@ -25,7 +25,8 @@ let RegisterUserComponent = class RegisterUserComponent {
             const user = {
                 email: formValues.email,
                 contactNumber: formValues.contactNumber,
-                password: formValues.password
+                password: formValues.password,
+                admin: formValues.admin
             };
             this._authService.registerUser(this.url, user)
                 .subscribe(_ => {
@@ -40,7 +41,8 @@ let RegisterUserComponent = class RegisterUserComponent {
         this.registerForm = new FormGroup({
             email: new FormControl('', [Validators.required, Validators.email]),
             password: new FormControl('', [Validators.required]),
-            contactNumber: new FormControl('', [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")])
+            contactNumber: new FormControl('', [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]),
+            admin: new FormControl(false)
         });
     }
 };
