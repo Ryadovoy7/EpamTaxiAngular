@@ -19,8 +19,8 @@
             <ng-template [ngIf]="order?.orderId != o.orderId" [ngIfElse]="edit">
                 <td>{{o.fullName}}</td>
                 <td>{{o.contactNumber}}</td>
-                <td>{{o.orderDate | date:'dd.MM.yyyy hh:mm'}}</td>
-                <td>{{o.carDeliveryTime | date:'dd.MM.yyyy hh:mm'}}</td>
+                <td>{{o.orderDate | date:'dd.MM.yyyy HH:mm'}}</td>
+                <td>{{o.carDeliveryTime | date:'dd.MM.yyyy HH:mm'}}</td>
                 <td>{{o.fromLocation}}</td>
                 <td>{{o.toLocation}}</td>
                 <td>{{o.cost.toFixed(2)}}</td>
@@ -29,7 +29,7 @@
                     <ng-template [ngIf]="o.status !== 3">
                         <button class="btn btn-sm btn-primary" (click)="editOrder(o)">Изменить</button>
                         <button class="btn btn-sm btn-danger" (click)="cancelOrder(o)">Отменить</button>
-                        <button *ngIf="this.authService.isUserAdmin()" class="btn btn-sm btn-primary" (click)="confirmOrder(o)">Подтвердить</button>
+                        <button *ngIf="this.authService.isUserAdmin() && o.status !== 1" class="btn btn-sm btn-primary" (click)="confirmOrder(o)">Подтвердить</button>
                     </ng-template>
                     <button *ngIf="this.authService.isUserAdmin()" class="btn btn-sm btn-danger" (click)="delete(o)">Удалить</button>
                 </td>
@@ -60,7 +60,7 @@
     </div>
     <div class="form-group">
         <label>Когда</label>
-        <input type="datetime-local" [(ngModel)]="order.carDeliveryTime" class="form-control" />
+        <input type="datetime-local" [value]="carDeliveryTimeToISO()" (change)="order.carDeliveryTime=test($event)" class="form-control" />
     </div>
     <div>
         <label>Стоимость</label>
@@ -70,6 +70,6 @@
     <div>
         <input [disabled]="!costCalculated" type="button" value="Сохранить" (click)="save()" class="btn btn-success" />
         <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
-        <input type="button" value="Предварительный расчет" (click)="calculate()" class="btn btn-warning" />
+        <input type="button" value="Предварительный расчет" (click)="calculate()" class="btn btn-warning" style="width: 250px" />
     </div>
 </ng-template>

@@ -103,6 +103,15 @@ let OrdersComponent = class OrdersComponent {
     formatCost(val) {
         val.toFixed(2);
     }
+    carDeliveryTimeToISO() {
+        let date = new Date(this.order.carDeliveryTime);
+        var tzoffset = date.getTimezoneOffset() * 60000;
+        var localISOTime = (new Date(date.getTime() - tzoffset)).toISOString().slice(0, -1);
+        return localISOTime;
+    }
+    test(val) {
+        return new Date(val.target.value);
+    }
 };
 OrdersComponent = __decorate([
     Component({

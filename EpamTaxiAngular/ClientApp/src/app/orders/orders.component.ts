@@ -71,7 +71,7 @@ export class OrdersComponent implements OnInit {
         this.tableMode = true;
         this.costCalculated = false;
         this.showError = false;
-        this.loadOrders();
+        this.loadOrders();       
     }
     delete(o: Order) {
         this.dataService.deleteOrder(o.orderId)
@@ -97,5 +97,13 @@ export class OrdersComponent implements OnInit {
     formatCost(val : number) {
         val.toFixed(2);
     }
-
+    carDeliveryTimeToISO() {
+        let date = new Date(this.order.carDeliveryTime);
+        var tzoffset = date.getTimezoneOffset() * 60000;
+        var localISOTime = (new Date(date.getTime() - tzoffset)).toISOString().slice(0, -1);
+        return localISOTime;
+    }
+    test(val: any) {
+        return new Date(val.target.value);
+    }
 }
